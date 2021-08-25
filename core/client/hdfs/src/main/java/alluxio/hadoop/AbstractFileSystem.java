@@ -16,6 +16,7 @@ import static java.util.stream.Collectors.toList;
 import alluxio.AlluxioURI;
 import alluxio.ClientContext;
 import alluxio.Constants;
+import alluxio.client.WriteType;
 import alluxio.client.file.FileOutStream;
 import alluxio.client.file.FileSystem;
 import alluxio.client.file.URIStatus;
@@ -172,9 +173,12 @@ public abstract class AbstractFileSystem extends org.apache.hadoop.fs.FileSystem
     if (mStatistics != null) {
       mStatistics.incrementWriteOps(1);
     }
-
+    WriteType mWriteType =
+        mAlluxioConf.getEnum(PropertyKey.USER_FILE_WRITE_TYPE_DEFAULT,
+            WriteType.class);
     AlluxioURI uri = getAlluxioPath(path);
     CreateFilePOptions options = CreateFilePOptions.newBuilder().setBlockSizeBytes(blockSize)
+        .setWriteType(mWriteType.toProto())
         .setMode(new Mode(permission.toShort()).toProto()).setRecursive(true).build();
 
     FileOutStream outStream;
@@ -615,8 +619,12 @@ public abstract class AbstractFileSystem extends org.apache.hadoop.fs.FileSystem
     if (mStatistics != null) {
       mStatistics.incrementWriteOps(1);
     }
+    WriteType mWriteType =
+        mAlluxioConf.getEnum(PropertyKey.USER_FILE_WRITE_TYPE_DEFAULT,
+            WriteType.class);
     AlluxioURI uri = getAlluxioPath(path);
     CreateDirectoryPOptions options = CreateDirectoryPOptions.newBuilder().setRecursive(true)
+        .setWriteType(mWriteType.toProto())
         .setAllowExists(true).setMode(new Mode(permission.toShort()).toProto()).build();
     try {
       mFileSystem.createDirectory(uri, options);
