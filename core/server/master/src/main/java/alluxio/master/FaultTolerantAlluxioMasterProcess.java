@@ -67,6 +67,7 @@ final class FaultTolerantAlluxioMasterProcess extends AlluxioMasterProcess {
     mLeaderSelector = Preconditions.checkNotNull(leaderSelector, "leaderSelector");
     mServingThread = null;
     mRunning = false;
+    mIsLeader = MasterRoleType.SECONDARY;
   }
 
   @Override
@@ -159,6 +160,7 @@ final class FaultTolerantAlluxioMasterProcess extends AlluxioMasterProcess {
       ThreadUtils.logAllThreads();
       throw new RuntimeException("Alluxio master failed to come up");
     }
+    mIsLeader = MasterRoleType.LEADER;
     LOG.info("Primary started");
     return true;
   }
@@ -184,6 +186,7 @@ final class FaultTolerantAlluxioMasterProcess extends AlluxioMasterProcess {
       LOG.info("Primary stopped");
     }
     startMasters(false);
+    mIsLeader = MasterRoleType.SECONDARY;
     LOG.info("Secondary started");
   }
 

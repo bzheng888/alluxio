@@ -85,6 +85,34 @@ public class AlluxioMasterProcess extends MasterProcess {
 
   private ForkJoinPool mRPCExecutor = null;
 
+  /** Master role. */
+  protected MasterRoleType mIsLeader;
+
+  /** Master role type. */
+  protected enum MasterRoleType {
+    /**
+     * Secondary master.
+     */
+    SECONDARY(0),
+    /**
+     * Leader master.
+     */
+    LEADER(1),
+    ;
+    private final int mValue;
+
+    MasterRoleType(int value) {
+      mValue = value;
+    }
+
+    /**
+     * @return the value of master role type
+     */
+    public int getValue() {
+      return mValue;
+    }
+  }
+
   /**
    * Creates a new {@link AlluxioMasterProcess}.
    */
@@ -115,6 +143,7 @@ public class AlluxioMasterProcess extends MasterProcess {
           .setUfsManager(mUfsManager)
           .build();
       MasterUtils.createMasters(mRegistry, mContext);
+      mIsLeader = MasterRoleType.LEADER;
     } catch (Exception e) {
       throw new RuntimeException(e);
     }
@@ -237,6 +266,14 @@ public class AlluxioMasterProcess extends MasterProcess {
   }
 
   /**
+   * Return master role.
+   * @return 1 if master is leader, otherwise 0
+   */
+  protected int getMasterRole() {
+    return mIsLeader.getValue();
+  }
+
+  /**
    * Starts serving web ui server, resetting master web port, adding the metrics servlet to the web
    * server and starting web ui.
    */
@@ -280,6 +317,9 @@ public class AlluxioMasterProcess extends MasterProcess {
    */
   protected void startServing(String startMessage, String stopMessage) {
     MetricsSystem.startSinks(ServerConfiguration.get(PropertyKey.METRICS_CONF_FILE));
+    MetricsSystem.registerGaugeIfAbsent(
+        MetricsSystem.getMetricName(MetricKey.MASTER_ROLE_TYPE.getName()),
+        this::getMasterRole);
     startServingRPCServer();
     LOG.info("Alluxio master web server version {} starting{}. webAddress={}",
         RuntimeConstants.VERSION, startMessage, mWebBindAddress);

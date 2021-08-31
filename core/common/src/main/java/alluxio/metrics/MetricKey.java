@@ -231,6 +231,11 @@ public final class MetricKey implements Comparable<MetricKey> {
   }
 
   // Master metrics
+  public static final MetricKey MASTER_ROLE_TYPE =
+      new Builder("Master.RoleType")
+          .setDescription("Describe this role, leader master or a standby master")
+          .setMetricType(MetricType.GAUGE)
+          .build();
   // Absent cache stats
   public static final MetricKey MASTER_ABSENT_CACHE_HITS =
       new Builder("Master.AbsentCacheHits")
