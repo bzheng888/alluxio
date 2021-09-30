@@ -125,7 +125,9 @@ public class MetadataCachingBaseFileSystem extends BaseFileSystem {
   public URIStatus getStatus(AlluxioURI path, GetStatusPOptions options)
       throws FileDoesNotExistException, IOException, AlluxioException {
     checkUri(path);
-    if (path.getPath().contains(Constants.INVALID_METADATA_CACHE_POSTFIX)) {
+    if (mFsContext.getClusterConf().getBoolean(PropertyKey
+        .USER_CLIENT_INVALID_METADATA_CACHE_ENABLE) && path.getPath()
+        .contains(Constants.INVALID_METADATA_CACHE_POSTFIX)) {
       return dropMetacache(path);
     }
     URIStatus status = mMetadataCache.get(path);

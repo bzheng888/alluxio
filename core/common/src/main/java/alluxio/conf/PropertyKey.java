@@ -4144,6 +4144,16 @@ public final class PropertyKey implements Comparable<PropertyKey> {
           .setConsistencyCheckLevel(ConsistencyCheckLevel.WARN)
           .setScope(Scope.CLIENT)
           .build();
+  public static final PropertyKey USER_CLIENT_INVALID_METADATA_CACHE_ENABLE =
+      new Builder(Name.USER_CLIENT_INVALID_METADATA_CACHE_ENABLE)
+          .setDefaultValue(true)
+          .setDescription("If this is enable, user can clear client metadata cache by "
+              + "execute 'ls {path}_drop_cache', the {path} is an absolute path in Alluxio. "
+              + "if '{path}' equals '/', it will clear all metadata cache in client side, if "
+              + "'{path}' points a file or a non-root directory, it will clear the path's metadata "
+              + "and its parent path metadata.")
+          .setScope(Scope.CLIENT)
+          .build();
   public static final PropertyKey USER_CLIENT_CACHE_STORE_OVERHEAD =
       new Builder(Name.USER_CLIENT_CACHE_STORE_OVERHEAD)
           .setDescription("A fraction value representing the storage overhead writing to disk. "
@@ -6150,6 +6160,8 @@ public final class PropertyKey implements Comparable<PropertyKey> {
         "alluxio.user.client.cache.timeout.duration";
     public static final String USER_CLIENT_CACHE_TIMEOUT_THREADS =
         "alluxio.user.client.cache.timeout.threads";
+    public static final String USER_CLIENT_INVALID_METADATA_CACHE_ENABLE =
+        "alluxio.user.client.invalid.metadata.cache.enable";
     public static final String USER_CONF_CLUSTER_DEFAULT_ENABLED =
         "alluxio.user.conf.cluster.default.enabled";
     public static final String USER_CONF_SYNC_INTERVAL = "alluxio.user.conf.sync.interval";
