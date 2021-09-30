@@ -160,6 +160,13 @@ public final class MetadataCache {
   }
 
   /**
+   * Invalidates all the cache.
+   */
+  public void invalidateAll() {
+    mCache.invalidateAll();
+  }
+
+  /**
    * @return the cache size
    */
   @VisibleForTesting

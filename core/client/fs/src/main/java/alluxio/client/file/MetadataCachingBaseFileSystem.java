@@ -12,6 +12,7 @@
 package alluxio.client.file;
 
 import alluxio.AlluxioURI;
+import alluxio.Constants;
 import alluxio.conf.AlluxioConfiguration;
 import alluxio.conf.PropertyKey;
 import alluxio.exception.AlluxioException;
@@ -124,6 +125,9 @@ public class MetadataCachingBaseFileSystem extends BaseFileSystem {
   public URIStatus getStatus(AlluxioURI path, GetStatusPOptions options)
       throws FileDoesNotExistException, IOException, AlluxioException {
     checkUri(path);
+    if (path.getPath().contains(Constants.INVALID_METADATA_CACHE_POSTFIX)) {
+      return dropMetacache(path);
+    }
     URIStatus status = mMetadataCache.get(path);
     if (status == null || !status.isCompleted()) {
       try {
@@ -227,5 +231,24 @@ public class MetadataCachingBaseFileSystem extends BaseFileSystem {
       ThreadUtils.shutdownAndAwaitTermination(mAccessTimeUpdater, THREAD_TERMINATION_TIMEOUT_MS);
       super.close();
     }
+  }
+
+  /**
+   * @param dropCmd the drop cache cmd info
+   * @return a mock RUIStatus object
+   */
+  public URIStatus dropMetacache(AlluxioURI dropCmd) {
+    AlluxioURI srcPath = new AlluxioURI(dropCmd.getPath().substring(0, dropCmd.getPath().length()
+        - Constants.INVALID_METADATA_CACHE_POSTFIX.length()));
+    URIStatus status = mMetadataCache.get(srcPath);
+    if (status != null) {
+      if (srcPath.getPath().equals("/")) {
+        mMetadataCache.invalidateAll();
+      } else {
+        mMetadataCache.invalidate(srcPath.getParent());
+        mMetadataCache.invalidate(srcPath);
+      }
+    }
+    return new URIStatus(new FileInfo());
   }
 }

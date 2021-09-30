@@ -148,6 +148,8 @@ public final class Constants {
   public static final String LOCALITY_RACK = "rack";
   public static final String MESOS_LOCAL_INSTALL = "LOCAL";
 
+  public static final String INVALID_METADATA_CACHE_POSTFIX = "_drop_cache";
+
   // Time-to-live
   public static final long NO_TTL = -1;
 
