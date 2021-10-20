@@ -4731,4 +4731,15 @@ public final class DefaultFileSystemMaster extends CoreMaster
   public List<String> getStateLockSharedWaitersAndHolders() {
     return mMasterContext.getStateLockManager().getSharedWaitersAndHolders();
   }
+
+  @Override
+  public void decommissionWorkers() {
+    AlluxioURI rootPath = new AlluxioURI(InodeTree.ROOT_PATH);
+    LockingScheme lockingScheme = new LockingScheme(rootPath, LockPattern.WRITE_INODE, false);
+    try (LockedInodePath inodePath = mInodeTree.lockInodePath(lockingScheme)) {
+      mBlockMaster.decommissionWorkers();
+    } catch (InvalidPathException e) {
+      LOG.error("Lock root path failed!");
+    }
+  }
 }

@@ -302,4 +302,9 @@ public interface FileSystemMasterClient extends Client {
    * @return the state lock waiters and holders thread identifiers
    */
   List<String> getStateLockHolders() throws AlluxioStatusException;
+
+  /**
+  * Decommission workers defined by excluded-workers.
+  */
+  void decommissionWorkers() throws AlluxioStatusException;
 }

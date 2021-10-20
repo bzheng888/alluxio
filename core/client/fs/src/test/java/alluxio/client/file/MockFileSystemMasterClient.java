@@ -179,6 +179,10 @@ class MockFileSystemMasterClient implements FileSystemMasterClient {
   }
 
   @Override
+  public void decommissionWorkers() throws AlluxioStatusException {
+  }
+
+  @Override
   public void connect() throws IOException {
   }
 

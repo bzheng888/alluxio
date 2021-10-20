@@ -177,6 +177,11 @@ public interface BlockMaster extends Master, ContainerIdGenerable {
   long getWorkerId(WorkerNetAddress workerNetAddress);
 
   /**
+   * Decommission workers defined by excluded-workers.
+   */
+  void decommissionWorkers();
+
+  /**
    * Updates metadata when a worker registers with the master.
    *
    * @param workerId the worker id of the worker registering

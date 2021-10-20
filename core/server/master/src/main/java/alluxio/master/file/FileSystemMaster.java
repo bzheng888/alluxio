@@ -600,4 +600,9 @@ public interface FileSystemMaster extends Master {
    * @return the list of thread identifiers that are waiting and holding the state lock
    */
   List<String> getStateLockSharedWaitersAndHolders();
+
+  /**
+   * Decommission workers defined by excluded-workers file.
+   */
+  void decommissionWorkers();
 }

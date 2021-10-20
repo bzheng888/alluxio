@@ -28,6 +28,8 @@ import alluxio.grpc.CreateDirectoryPRequest;
 import alluxio.grpc.CreateDirectoryPResponse;
 import alluxio.grpc.CreateFilePRequest;
 import alluxio.grpc.CreateFilePResponse;
+import alluxio.grpc.DecommissionWorkersPRequest;
+import alluxio.grpc.DecommissionWorkersPResponse;
 import alluxio.grpc.DeletePRequest;
 import alluxio.grpc.DeletePResponse;
 import alluxio.grpc.FileSystemMasterClientServiceGrpc;
@@ -420,6 +422,15 @@ public final class FileSystemMasterClientServiceHandler
       final List<String> holders = mFileSystemMaster.getStateLockSharedWaitersAndHolders();
       return GetStateLockHoldersPResponse.newBuilder().addAllThreads(holders).build();
     }, "getStateLockHolders", "request=%s", responseObserver, request);
+  }
+
+  @Override
+  public void decommissionWorkers(DecommissionWorkersPRequest request,
+      StreamObserver<DecommissionWorkersPResponse> responseObserver) {
+    RpcUtils.call(LOG, () -> {
+      mFileSystemMaster.decommissionWorkers();
+      return DecommissionWorkersPResponse.newBuilder().build();
+    }, "decommissionWorkers", "request=%s", responseObserver, request);
   }
 
   /**
