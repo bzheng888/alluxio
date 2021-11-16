@@ -499,4 +499,27 @@ int UtimensOperation::call(const char *path, const struct timespec ts[2]) {
   return ret;
 }
 
+IoctlOperation::IoctlOperation(JniFuseFileSystem *fs) {
+  this->fs = fs;
+  JNIEnv *env = this->fs->getEnv();
+  this->obj = this->fs->getFSObj();
+  this->clazz = env->GetObjectClass(this->fs->getFSObj());
+  this->signature = "(Ljava/lang/String;JJJJ,Ljava/nio/ByteBuffer;Ljava/nio/ByteBuffer;Ljava/nio/ByteBuffer;)I";
+  this->methodID = env->GetMethodID(this->clazz, "ioctlCallback", signature);
+}
+
+int IoctlOperation::call(const char *path, int cmd, void *arg,
+                         struct fuse_file_info *fi, unsigned int flags, void *data) {
+  JNIEnv *env = this->fs->getEnv();
+  jstring jspath = env->NewStringUTF(path);
+  jobject dataBuffer = env->NewDirectByteBuffer((void *)data, 0);
+
+  int ret = env->CallIntMethod(this->obj, this->methodID, jspath, data);
+
+  env->DeleteLocalRef(jspath);
+  env->DeleteLocalRef(dataBuffer);
+
+  return ret;
+}
+
 }  // namespace jnifuse
