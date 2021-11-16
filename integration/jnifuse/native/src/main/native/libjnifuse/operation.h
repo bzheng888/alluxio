@@ -173,6 +173,13 @@ class UtimensOperation : public Operation {
   int call(const char *path, const struct timespec ts[2]);
 };
 
+class IoctlOperation : public Operation {
+ public:
+  IoctlOperation(JniFuseFileSystem *fs);
+  int call(const char *path, int cmd, void *arg,
+    struct fuse_file_info *fi, unsigned int flags, void *data);
+};
+
 }  // namespace jnifuse
 
 #endif  // FUSE_NATIVE_LIBJNIFUSE_OPERATION_H_
