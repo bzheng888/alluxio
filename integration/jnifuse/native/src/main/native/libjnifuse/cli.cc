@@ -9,7 +9,7 @@
  * See the NOTICE file distributed with this work for information regarding copyright ownership.
  */
 
-#include "jnifuse_cli.h"
+#include "cli.h"
 
 const char *usage =
 "Usage: cli mountpint Command [relative path]\n"
@@ -23,21 +23,21 @@ const char *usage =
 
 int main(int argc, char **argv)
 {
-    JniFuseClient *cli = nullptr;
-    char mnt_point[MAXPATHLEN] = {0};
-    char path[MAXPATHLEN] = {0};
-    char cmd[MAXCMDLEN] = {0};
-    if (argc < 3) {
-        fprintf(stderr, "%s", usage);
-        return -1;
-    }
-	strncpy(mnt_point, argv[1], strlen(argv[1]) + 1);
-	strncpy(cmd, argv[2], strlen(argv[2]) + 1);
-	if (argc == 4) {
-	    strncpy(path, argv[3], strlen(argv[3]) + 1);
-	}
-	cli = new JniFuseClient(mnt_point, cmd, path);
-    cli->exec_cmd();
-    delete cli;
-    return 0;
+  JniFuseClient *cli = nullptr;
+  char mnt_point[MAXFUSEPATHLEN] = {0};
+  char path[MAXFUSEPATHLEN] = {0};
+  char cmd[MAXCMDLEN] = {0};
+  if (argc < 3) {
+      fprintf(stderr, "%s", usage);
+      return -1;
+  }
+  strncpy(mnt_point, argv[1], strlen(argv[1]) + 1);
+  strncpy(cmd, argv[2], strlen(argv[2]) + 1);
+  if (argc == 4) {
+      strncpy(path, argv[3], strlen(argv[3]) + 1);
+  }
+  cli = new JniFuseClient(mnt_point, cmd, path);
+  cli->exec_cmd();
+  delete cli;
+  return 0;
 }

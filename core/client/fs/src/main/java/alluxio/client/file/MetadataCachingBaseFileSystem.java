@@ -231,6 +231,7 @@ public class MetadataCachingBaseFileSystem extends BaseFileSystem {
 
   /**
    * Get metadata cache size.
+   * @return Metadata cache size
    */
   public long getMetadataCacheSize() {
     return mMetadataCache.size();

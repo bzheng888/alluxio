@@ -16,20 +16,25 @@ import jnr.ffi.Runtime;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 
-public class FuseBuf extends ru.serce.jnrfuse.struct.FuseBuf{
-    private final ByteBuffer buffer;
+public class FuseBuf extends ru.serce.jnrfuse.struct.FuseBuf {
 
-    public FuseBuf(Runtime runtime, ByteBuffer buffer) {
-        super(runtime);
-        this.buffer = buffer;
-        // depends on the arch
-        this.buffer.order(ByteOrder.LITTLE_ENDIAN);
-    }
+  private final ByteBuffer buffer;
 
-    public static FuseBuf of(ByteBuffer buffer) {
-        Runtime runtime = Runtime.getSystemRuntime();
-        FuseBuf fb = new FuseBuf(runtime, buffer);
-        fb.useMemory(jnr.ffi.Pointer.wrap(runtime, buffer));
-        return fb;
-    }
+  protected FuseBuf(Runtime runtime, ByteBuffer buffer) {
+    super(runtime);
+    this.buffer = buffer;
+    // depends on the arch
+    this.buffer.order(ByteOrder.LITTLE_ENDIAN);
+  }
+
+  public ByteBuffer getBuffer() {
+    return buffer;
+  }
+
+  public static FuseBuf of(ByteBuffer buffer) {
+    Runtime runtime = Runtime.getSystemRuntime();
+    FuseBuf fb = new FuseBuf(runtime, buffer);
+    fb.useMemory(jnr.ffi.Pointer.wrap(runtime, buffer));
+    return fb;
+  }
 }
