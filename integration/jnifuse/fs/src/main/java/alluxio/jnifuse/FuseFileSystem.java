@@ -15,6 +15,7 @@ import alluxio.jnifuse.struct.FileStat;
 import alluxio.jnifuse.struct.FuseContext;
 import alluxio.jnifuse.struct.FuseFileInfo;
 import alluxio.jnifuse.struct.Statvfs;
+import alluxio.jnifuse.struct.FuseBuf;
 
 import java.nio.ByteBuffer;
 import java.util.concurrent.ThreadLocalRandom;
@@ -104,7 +105,10 @@ public interface FuseFileSystem {
   default int utimensCallback(String path, long aSec, long aNsec, long mSec, long mNsec) {
     throw new UnsupportedOperationException("utimens");
   }
-
+  
+  default int ioctl(String path, int cmd, FuseBuf buf) {
+    throw new UnsupportedOperationException("ioctl");
+  }
   default FuseContext getContext() {
     // TODO: get real context
     return FuseContext.of(ByteBuffer.allocate(32));

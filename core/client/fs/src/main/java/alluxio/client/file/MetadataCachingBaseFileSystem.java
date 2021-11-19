@@ -228,4 +228,30 @@ public class MetadataCachingBaseFileSystem extends BaseFileSystem {
       super.close();
     }
   }
+
+  /**
+   * Get metadata cache size.
+   */
+  public long getMetadataCacheSize() {
+    return mMetadataCache.size();
+  }
+
+  /**
+   * Clear metadata cache for a given path.
+   * @param path the cache path need to clear
+   */
+  public void clearMetadataCache(AlluxioURI path) {
+    if (mMetadataCache.size() == 0) {
+      return;
+    }
+    if (path.getPath().equals("/")) {
+      mMetadataCache.invalidateAll();
+    } else {
+      URIStatus status = mMetadataCache.get(path);
+      if (status != null) {
+        mMetadataCache.invalidate(path.getParent());
+        mMetadataCache.invalidate(path);
+      }
+    }
+  }
 }

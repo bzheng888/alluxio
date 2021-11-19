@@ -16,6 +16,7 @@ import alluxio.client.file.FileInStream;
 import alluxio.client.file.FileOutStream;
 import alluxio.client.file.FileSystem;
 import alluxio.client.file.URIStatus;
+import alluxio.client.file.MetadataCachingBaseFileSystem;
 import alluxio.collections.IndexDefinition;
 import alluxio.collections.IndexedSet;
 import alluxio.conf.AlluxioConfiguration;
@@ -33,6 +34,7 @@ import alluxio.jnifuse.ErrorCodes;
 import alluxio.jnifuse.FuseException;
 import alluxio.jnifuse.FuseFillDir;
 import alluxio.jnifuse.struct.FileStat;
+import alluxio.jnifuse.struct.FuseBuf;
 import alluxio.jnifuse.struct.FuseFileInfo;
 import alluxio.metrics.MetricKey;
 import alluxio.metrics.MetricsSystem;
@@ -709,6 +711,30 @@ public final class AlluxioJniFuseFileSystem extends AbstractFuseFileSystem
   public int utimensCallback(String path, long aSec, long aNsec, long mSec, long mNsec) {
     // TODO(maobaolong): implements this logic for alluxio.
     LOG.debug("utimens for {}, but do nothing for this filesystem", path);
+    return 0;
+  }
+
+  @Override
+  public int ioctl(String path, int cmd, FuseBuf buf) {
+    if (!(mFileSystem instanceof MetadataCachingBaseFileSystem)) {
+      LOG.error("Alluxio client metadata cache is not enabled.");
+      return -ErrorCodes.EOPNOTSUPP();
+    }
+    switch (cmd) {
+      case 0: {
+        long size = ((MetadataCachingBaseFileSystem) mFileSystem).getMetadataCacheSize();
+        buf.size.set(size);
+      }
+      break;
+      case 1: {
+        final AlluxioURI uri = mPathResolverCache.getUnchecked(path);
+        ((MetadataCachingBaseFileSystem) mFileSystem).clearMetadataCache(uri);
+      }
+      break;
+      default:
+        LOG.error("Cmd is not supported by alluxio.");
+        return -ErrorCodes.EOPNOTSUPP();
+    }
     return 0;
   }
 

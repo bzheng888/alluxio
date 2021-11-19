@@ -18,28 +18,36 @@ FUSE_CXXFLAGS = $(shell pkg-config fuse --cflags)
 ifeq ($(UNAME), Linux)
 	INCDIR += -I $(JAVA_HOME)/include/linux
 	TARGET_LIB := libjnifuse.so
+	TARGET_CLI := cli
 endif
 # MacOS
 ifeq ($(UNAME), Darwin)
 	INCDIR += -I $(JAVA_HOME)/include/darwin
 	TARGET_LIB := libjnifuse.dylib
+	TARGET_CLI := cli
 	INCDIR += -D__APPLE__
 endif
 
-CXXFLAGS = -std=c++11 -Wall -fPIC -D_FILE_OFFSET_BITS=64 ${INCDIR} ${FUSE_CXXFLAGS}
+CXXFLAGS = -std=c++11 -g -Wall -fPIC -D_FILE_OFFSET_BITS=64 ${INCDIR} ${FUSE_CXXFLAGS}
 LDFLAGS = -shared ${FUSE_LIBS}
 OUTPUT_DIR ?= .
-SRC_DIR ?= ../../../../src/main/native/libjnifuse
-OBJS= $(addprefix $(OUTPUT_DIR)/, $(patsubst %.cc,%.o,$(notdir $(wildcard $(SRC_DIR)/*.cc))))
+SRC_DIR ?= ../../src/main/native/libjnifuse
+OBJS= $(filter-out jnifuse_cli.o, $(addprefix $(OUTPUT_DIR)/, $(patsubst %.cc,%.o,$(notdir $(wildcard $(SRC_DIR)/*.cc)))))
+
+ALL : ${TARGET_LIB} ${TARGET_CLI}
 
 ${TARGET_LIB}: ${OBJS}
 	${CXX} ${CXXFLAGS} -o ${OUTPUT_DIR}/${TARGET_LIB} ${OBJS} ${LDFLAGS}
+
+${TARGET_CLI}: ${OUTPUT_DIR}/jnifuse_cli.o
+	${CXX} ${CXXFLAGS} -o ${OUTPUT_DIR}/${TARGET_CLI} jnifuse_cli.o
 
 install: ${TARGET_LIB}
 	sudo mv ${TARGET_LIB} /usr/lib/
 
 clean:
 	rm -rf ${OBJS} ${OUTPUT_DIR}/${TARGET_LIB}
+	rm -rf ${TARGET_CLI}
 
 ${OUTPUT_DIR}/%.o: ${SRC_DIR}/%.cc
 	${CXX} ${CXXFLAGS} -o $@ -c $<

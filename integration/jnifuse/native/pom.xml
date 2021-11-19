@@ -61,6 +61,7 @@
                     <copy todir="${project.basedir}/src/main/resources">
                       <fileset dir="${project.build.directory}/native/">
                         <include name="libjnifuse.*"/>
+                        <include name="cli"/>
                       </fileset>
                     </copy>
                   </target>

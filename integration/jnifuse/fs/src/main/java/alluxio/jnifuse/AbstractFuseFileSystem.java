@@ -15,6 +15,7 @@ import alluxio.jnifuse.struct.FileStat;
 import alluxio.jnifuse.struct.FuseContext;
 import alluxio.jnifuse.struct.FuseFileInfo;
 import alluxio.jnifuse.struct.Statvfs;
+import alluxio.jnifuse.struct.FuseBuf;
 import alluxio.jnifuse.utils.SecurityUtils;
 
 import org.apache.commons.lang3.SystemUtils;
@@ -334,6 +335,15 @@ public abstract class AbstractFuseFileSystem implements FuseFileSystem {
 
   public int removexattrCallback(String path, String name) {
     return 0;
+  }
+
+  public int ioctlCallback(String path, int cmd, ByteBuffer buf) {
+    try {
+      return ioctl(path, cmd, FuseBuf.of(buf));
+    } catch (Exception e) {
+      LOG.error("Failed to ioctl {}", path, e);
+      return -ErrorCodes.EIO();
+    }
   }
 
   @Override

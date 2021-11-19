@@ -19,6 +19,7 @@
 #include <jni.h>
 
 #include "jnifuse_fs.h"
+#include "jnifuse_cli.h"
 
 namespace jnifuse {
 

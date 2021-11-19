@@ -504,20 +504,22 @@ IoctlOperation::IoctlOperation(JniFuseFileSystem *fs) {
   JNIEnv *env = this->fs->getEnv();
   this->obj = this->fs->getFSObj();
   this->clazz = env->GetObjectClass(this->fs->getFSObj());
-  this->signature = "(Ljava/lang/String;JJJJ,Ljava/nio/ByteBuffer;Ljava/nio/ByteBuffer;Ljava/nio/ByteBuffer;)I";
+  this->signature = "(Ljava/lang/String;ILjava/nio/ByteBuffer;)I";
   this->methodID = env->GetMethodID(this->clazz, "ioctlCallback", signature);
 }
 
 int IoctlOperation::call(const char *path, int cmd, void *arg,
                          struct fuse_file_info *fi, unsigned int flags, void *data) {
+  int size = _IOC_SIZE(cmd);
+  int nr = _IOC_NR(cmd);
   JNIEnv *env = this->fs->getEnv();
-  jstring jspath = env->NewStringUTF(path);
-  jobject dataBuffer = env->NewDirectByteBuffer((void *)data, 0);
+  jstring jspath = env->NewStringUTF((char *)data);
+  jobject dataBuffer = env->NewDirectByteBuffer((void *)data, size);
 
-  int ret = env->CallIntMethod(this->obj, this->methodID, jspath, data);
+  int ret = env->CallIntMethod(this->obj, this->methodID, jspath, nr, dataBuffer);
 
   env->DeleteLocalRef(jspath);
-  env->DeleteLocalRef(dataBuffer);
+  //env->DeleteLocalRef(dataBuffer);
 
   return ret;
 }
