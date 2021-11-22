@@ -40,14 +40,14 @@ ${TARGET_LIB}: ${OBJS}
 	${CXX} ${CXXFLAGS} -o ${OUTPUT_DIR}/${TARGET_LIB} ${OBJS} ${LDFLAGS}
 
 ${TARGET_CLI}: ${OUTPUT_DIR}/cli.o
-	${CXX} ${CXXFLAGS} -o ${OUTPUT_DIR}/${TARGET_CLI} cli.o
+	${CXX} ${CXXFLAGS} -o ${OUTPUT_DIR}/${TARGET_CLI} ${OUTPUT_DIR}/cli.o ${LDFLAGS}
 
 install: ${TARGET_LIB}
 	sudo mv ${TARGET_LIB} /usr/lib/
 
 clean:
 	rm -rf ${OBJS} ${OUTPUT_DIR}/${TARGET_LIB}
-	rm -rf ${TARGET_CLI}
+	rm -rf ${OUTPUT_DIR}/${TARGET_CLI}
 
 ${OUTPUT_DIR}/%.o: ${SRC_DIR}/%.cc
 	${CXX} ${CXXFLAGS} -o $@ -c $<

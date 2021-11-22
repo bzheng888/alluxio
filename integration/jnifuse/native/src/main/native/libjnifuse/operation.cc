@@ -519,7 +519,7 @@ int IoctlOperation::call(const char *path, int cmd, void *arg,
   int ret = env->CallIntMethod(this->obj, this->methodID, jspath, nr, dataBuffer);
 
   env->DeleteLocalRef(jspath);
-  //env->DeleteLocalRef(dataBuffer);
+  env->DeleteLocalRef(dataBuffer);
 
   return ret;
 }
