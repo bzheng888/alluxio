@@ -9,7 +9,7 @@
  * See the NOTICE file distributed with this work for information regarding copyright ownership.
  */
 
-package alluxio.fuse.cli.metadatacache;
+package alluxio.cli.metadatacache;
 
 import alluxio.AlluxioURI;
 import alluxio.Constants;
@@ -19,17 +19,17 @@ import alluxio.client.file.URIStatus;
 import alluxio.conf.AlluxioConfiguration;
 import alluxio.conf.PropertyKey;
 import alluxio.exception.status.InvalidArgumentException;
-import alluxio.fuse.cli.command.AbstractFuseShellCommand;
+import alluxio.cli.command.AbstractFuseShellCommand;
 import alluxio.wire.FileInfo;
 
-public final class SizeCommand extends AbstractFuseShellCommand {
-  public SizeCommand(FileSystem fs, AlluxioConfiguration conf, String parentCommandName) {
+public final class DropAllCommand extends AbstractFuseShellCommand {
+  public DropAllCommand(FileSystem fs, AlluxioConfiguration conf, String parentCommandName) {
     super(fs, conf, parentCommandName);
   }
 
   @Override
   public String getCommandName() {
-    return "size";
+    return "dropAll";
   }
 
   @Override
@@ -40,14 +40,13 @@ public final class SizeCommand extends AbstractFuseShellCommand {
 
   @Override
   public URIStatus run(AlluxioURI path, String [] argv) {
-    // The 'ls -l' command will show metadata cache size in the <filesize> field.
-    long size = ((MetadataCachingBaseFileSystem) mFileSystem).getMetadataCacheSize();
-    return new URIStatus(new FileInfo().setLength(size).setCompleted(true));
+    ((MetadataCachingBaseFileSystem) mFileSystem).dropMetadataCacheAll();
+    return new URIStatus(new FileInfo().setCompleted(true));
   }
 
   @Override
   public String getDescription() {
-    return "Get fuse client metadata size.";
+    return "Clear all the fuse client metadata cache.";
   }
 
   @Override

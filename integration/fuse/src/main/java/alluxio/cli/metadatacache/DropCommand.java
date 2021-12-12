@@ -9,7 +9,7 @@
  * See the NOTICE file distributed with this work for information regarding copyright ownership.
  */
 
-package alluxio.fuse.cli.metadatacache;
+package alluxio.cli.metadatacache;
 
 import alluxio.AlluxioURI;
 import alluxio.Constants;
@@ -19,7 +19,7 @@ import alluxio.client.file.URIStatus;
 import alluxio.conf.AlluxioConfiguration;
 import alluxio.conf.PropertyKey;
 import alluxio.exception.status.InvalidArgumentException;
-import alluxio.fuse.cli.command.AbstractFuseShellCommand;
+import alluxio.cli.command.AbstractFuseShellCommand;
 import alluxio.wire.FileInfo;
 
 public final class DropCommand extends AbstractFuseShellCommand {

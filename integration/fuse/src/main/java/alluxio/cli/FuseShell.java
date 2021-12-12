@@ -9,12 +9,10 @@
  * See the NOTICE file distributed with this work for information regarding copyright ownership.
  */
 
-package alluxio.fuse.cli;
+package alluxio.cli;
 
 import alluxio.AlluxioURI;
 import alluxio.Constants;
-import alluxio.cli.Command;
-import alluxio.cli.CommandUtils;
 import alluxio.client.file.FileSystem;
 import alluxio.client.file.URIStatus;
 import alluxio.conf.AlluxioConfiguration;

@@ -9,16 +9,16 @@
  * See the NOTICE file distributed with this work for information regarding copyright ownership.
  */
 
-package alluxio.fuse.cli.command;
+package alluxio.cli.command;
 
 import alluxio.Constants;
 import alluxio.cli.Command;
 import alluxio.client.file.FileSystem;
 import alluxio.collections.TwoKeyConcurrentMap;
 import alluxio.conf.AlluxioConfiguration;
-import alluxio.fuse.cli.metadatacache.DropAllCommand;
-import alluxio.fuse.cli.metadatacache.DropCommand;
-import alluxio.fuse.cli.metadatacache.SizeCommand;
+import alluxio.cli.metadatacache.DropAllCommand;
+import alluxio.cli.metadatacache.DropCommand;
+import alluxio.cli.metadatacache.SizeCommand;
 
 import java.util.HashMap;
 import java.util.Map;
