@@ -1555,9 +1555,6 @@ public final class DefaultFileSystemMaster extends CoreMaster
     mInodeTree.updateInode(rpcContext, UpdateInodeEntry.newBuilder()
         .setId(inode.getId())
         .setUfsFingerprint(ufsFingerprint)
-        .setLastModificationTimeMs(opTimeMs)
-        .setLastAccessTimeMs(opTimeMs)
-        .setOverwriteModificationTime(true)
         .build());
     mInodeTree.updateInodeFile(rpcContext, entry.build());
 
