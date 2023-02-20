@@ -300,4 +300,11 @@ int write_wrapper(const char *path, const char *buf, size_t size, off_t off,
       path, buf, size, off, fi);
 }
 
+int ioctl_wrapper(const char *path, int cmd, void *arg,
+                  struct fuse_file_info *fi, unsigned int flags, void *data) {
+  return jnifuse::JniFuseFileSystem::getInstance()->ioctlOper->call(
+      path, cmd, arg, fi, flags, data);
+
+}
+
 #endif  // FUSE_USE_VERSION >= 30

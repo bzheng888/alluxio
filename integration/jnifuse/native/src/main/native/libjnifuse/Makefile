@@ -32,7 +32,7 @@ ifeq ($(UNAME), Darwin)
 	INCDIR += -D__APPLE__
 endif
 
-COMMON_FLAGS = -std=c++11 -Wall -fPIC -D_FILE_OFFSET_BITS=64 ${INCDIR}
+COMMON_FLAGS = -std=c++11 -Wall -g -fPIC -D_FILE_OFFSET_BITS=64 ${INCDIR}
 
 FUSE2_CXXFLAGS += ${COMMON_FLAGS}
 FUSE2_LDFLAGS = -shared ${FUSE2_LIBS}
