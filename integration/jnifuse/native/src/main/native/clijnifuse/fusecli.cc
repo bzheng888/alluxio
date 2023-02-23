@@ -92,7 +92,7 @@ int main(int argc, char **argv)
 {
   OptionParser options(argc, argv);
   if (options.subcommand->hasOptions()) {
-   std::string path = options.subcommand->parseOptions(options.argc, options.argv);
+   CommandArgs args = options.subcommand->parseOptions(options.argc, options.argv);
   } else {
 
   }

@@ -21,10 +21,17 @@
 
 namespace jnifuse {
 
+#define DEFAULT_MOUNT_POINT "/tmp/alluxio-fuse"
+
 class MetaDataCacheCommand;
 class ClearAllMetadataCache;
 class ClearMetaDataCache;
 class MetadataCacheSize;
+
+struct CommandArgs {
+ std::string mountPoint;
+ std::string path;
+};
 
 class Command {
  public:
@@ -34,9 +41,10 @@ class Command {
   virtual std::map<std::string, Command*> getSubCommands() const = 0;
   virtual bool hasOptions() const = 0;
   // Parse options, the return value should expend into struct.
-  virtual std::string parseOptions(int& argc, char**& argv) = 0;
+  virtual CommandArgs parseOptions(int& argc, char**& argv) = 0;
  protected:
   std::map<std::string, Command*> subCommands;
+  CommandArgs args;
 };
 
 class ClearMetaDataCache : public Command {
@@ -47,8 +55,10 @@ class ClearMetaDataCache : public Command {
    std::string getUsage() const override {
     return "fusecli metadatacache clear [options]" \
            "options:"
+           "\t-m, --mnt" \
+           "                The fuse mount point, default /tmp/alluxio-fuse.";
            "\t-p, --path" \
-           "                clear the metadata cache for the specific path.";
+           "                Clear the metadata cache for the specific path.";
    }
    bool hasSubCommands() const override {
     return false;
@@ -59,12 +69,10 @@ class ClearMetaDataCache : public Command {
    std::map<std::string, Command*> getSubCommands() const override {
     return subCommands;
    }
-   std::string parseOptions(int& argc, char**& argv) override;
- private:
-  std::string path;
+   CommandArgs parseOptions(int& argc, char**& argv) override;
 };
 
-std::string ClearMetaDataCache::parseOptions(int& argc, char**& argv) {
+CommandArgs ClearMetaDataCache::parseOptions(int& argc, char**& argv) {
  while(true) {
   static struct option longOptions[] = {
    {"path",  required_argument, NULL, 'p'}
@@ -73,7 +81,7 @@ std::string ClearMetaDataCache::parseOptions(int& argc, char**& argv) {
   if (c == -1) break;
   switch (c){
    case 'p':
-    path = optarg;
+    args.path = optarg;
     break;
    default:
     getUsage();
@@ -84,7 +92,7 @@ std::string ClearMetaDataCache::parseOptions(int& argc, char**& argv) {
   getUsage();
   exit(0);
  }
- return path;
+ return args;
 }
 
 class ClearAllMetadataCache : public Command {
@@ -105,8 +113,8 @@ class ClearAllMetadataCache : public Command {
    std::map<std::string, Command*> getSubCommands() const override {
     return subCommands;
    }
-   std::string parseOptions(int& argc, char**& argv) override {
-    return "";
+   CommandArgs parseOptions(int& argc, char**& argv) override {
+    return args;
    }
 };
 
@@ -118,6 +126,8 @@ class MetadataCacheSize : public Command {
    std::string getUsage() const override {
     return "size [options]" \
            "options:"
+           "\t-m, --mnt" \
+           "                The fuse mount point, default /tmp/alluxio-fuse.";
            "\t-p, --path" \
            "                get the metadata size for the specific path.";
    }
@@ -130,12 +140,10 @@ class MetadataCacheSize : public Command {
    std::map<std::string, Command*> getSubCommands() const override {
     return subCommands;
    }
-   std::string parseOptions(int& argc, char**& argv) override;
- private:
-  std::string path;
+   CommandArgs parseOptions(int& argc, char**& argv) override;
 };
 
-std::string MetadataCacheSize::parseOptions(int& argc, char**& argv) {
+CommandArgs MetadataCacheSize::parseOptions(int& argc, char**& argv) {
  while(true) {
   static struct option longOptions[] = {
    {"path",  required_argument, NULL, 'p'}
@@ -144,7 +152,7 @@ std::string MetadataCacheSize::parseOptions(int& argc, char**& argv) {
   if (c == 1) break;
   switch (c){
    case 'p':
-    path = optarg;
+    args.path = optarg;
     break;
    default:
     getUsage();
@@ -155,7 +163,7 @@ std::string MetadataCacheSize::parseOptions(int& argc, char**& argv) {
   getUsage();
   exit(0);
  }
- return path;
+ return args;
 }
 
 class MetaDataCacheCommand : public Command {
@@ -179,8 +187,8 @@ class MetaDataCacheCommand : public Command {
    return false;
   }
   std::map<std::string, Command*> getSubCommands() const override;
-  std::string parseOptions(int& argc, char**& argv) override {
-    return "";
+  CommandArgs parseOptions(int& argc, char**& argv) override {
+    return args;
   }
 };
 
